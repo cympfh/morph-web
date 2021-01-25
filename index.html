@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>morph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css" />
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <style>
+body {
+  font-size: 1.0rem;
+}
+div#console {
+  font-size: 1.0rem;
+  font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+}
+ul {
+  list-style: none;
+}
+ul li:before {
+  content: "+";
+}
+ul li {
+  margin-left: 0.2rem;
+}
+summary {
+  cursor: pointer;
+}
+progress {
+  height: 0.5rem;
+  width: 6rem;
+}
+.level {
+  display: inline;
+  color: #666;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.level:hover {
+  color: #111;
+  font-weight: bold;
+}
+a {
+  color: #acc;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <div class="container">
+        <div id="console">
+          <details open><summary>TODO</summary>
+            <div class="field has-addons">
+              <div class="control">
+                <input class="input" type="text" placeholder="New Item" v-model="new_item">
+              </div>
+              <div class="control">
+                <a class="button is-info" v-on:click="add">Add</a>
+              </div>
+            </div>
+            <ul>
+            <li v-for="item in todo">
+              {{ item["name"] }}
+              <a v-on:click="_wip" :data="item['id']">wip</a>
+              <a v-on:click="_abort" :data="item['id']">abort</a>
+            </li>
+          </ul></details>
+          <details open><summary>WIP</summary><ul>
+            <li v-for="item in wip">
+              {{ item["name"] }}
+              <progress v-bind:max="item['level'] + 1" v-bind:value="item['level']"></progress>
+              <span class="level" v-on:click="inc" :data="item['id']">Lv.{{ item["level"] }}</span>
+              <a v-on:click="_done" :data="item['id']">done</a>
+              <a v-on:click="_abort" :data="item['id']">abort</a>
+            </li>
+          </ul></details>
+          <details><summary>DONE</summary><ul>
+            <li v-for="item in done">
+              {{ item["name"] }}
+              <progress v-bind:max="item['level']" v-bind:value="item['level']"></progress>
+            </li>
+          </ul></details>
+          <details><summary>ABORT</summary><ul>
+            <li v-for="item in abort">
+              {{ item["name"] }}
+              <a v-on:click="_todo" :data="item['id']">todo</a>
+              <a v-on:click="_wip" :data="item['id']">wip</a>
+            </li>
+          </ul></details>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var console_vue = new Vue({
+        el: "#console",
+        data: {
+          todo: [],
+          wip: [],
+          done: [],
+          abort: [],
+          new_item: "",
+        },
+        methods: {
+          reload() {
+            fetch(`${location.protocol}//${location.host}/morph/api/items`)
+              .then(response => response.json())
+              .then(data => {
+                this.todo = data["TODO"];
+                this.wip = data["WIP"];
+                this.done = data["DONE"];
+                this.abort = data["ABORT"];
+              });
+          },
+          inc(elem) {
+            var id = elem.target.attributes.data.value;
+            fetch(`${location.protocol}//${location.host}/morph/api/inc/${id}`, {
+              method: "POST",
+            }).then(response => response.json())
+              .then(_ => this.reload());
+          },
+          _todo(elem) {
+            var id = elem.target.attributes.data.value;
+            fetch(`${location.protocol}//${location.host}/morph/api/mv/${id}/TODO`, {
+              method: "POST",
+            }).then(response => response.json())
+              .then(_ => this.reload());
+          },
+          _wip(elem) {
+            var id = elem.target.attributes.data.value;
+            fetch(`${location.protocol}//${location.host}/morph/api/mv/${id}/WIP`, {
+              method: "POST",
+            }).then(response => response.json())
+              .then(_ => this.reload());
+          },
+          _done(elem) {
+            console.log( elem.target );
+            console.log( elem.target.attributes );
+            var id = elem.target.attributes.data.value;
+            fetch(`${location.protocol}//${location.host}/morph/api/mv/${id}/DONE`, {
+              method: "POST",
+            }).then(response => response.json())
+              .then(_ => this.reload());
+          },
+          _abort(elem) {
+            var id = elem.target.attributes.data.value;
+            fetch(`${location.protocol}//${location.host}/morph/api/mv/${id}/ABORT`, {
+              method: "POST",
+            }).then(response => response.json())
+              .then(_ => this.reload() );
+          },
+          add() {
+            fetch(`${location.protocol}//${location.host}/morph/api/new/${this.new_item}`, {
+              method: "POST",
+            }).then(response => response.json())
+              .then(_ => {
+                  this.new_item = "";
+                  this.reload();
+              });
+          },
+        },
+        created() {
+          this.reload();
+        },
+      });
+    </script>
+
+  </body>
+</html>
