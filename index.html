@@ -40,17 +40,27 @@ div#console {
     Monaco,
     monospace;
 }
+.animetitle {
+  width: 10rem;
+  display: inline-block;
+}
 ul {
   list-style: none;
 }
 ul li:before {
   content: "+";
+  margin-right: 0.2rem;
 }
 ul li {
   margin-left: 0.2rem;
 }
 summary {
   cursor: pointer;
+  color: #000;
+  transition-duration: 0.1s;
+}
+summary:hover {
+  color: #888;
 }
 progress {
   height: 0.5rem;
@@ -67,7 +77,8 @@ progress {
   font-weight: bold;
 }
 a {
-  color: #acc;
+  color: #cdd;
+  transition-duration: 0.2s;
 }
 
     </style>
@@ -76,7 +87,7 @@ a {
     <div class="section">
       <div class="container">
         <div id="console">
-          <details open><summary>TODO</summary>
+          <details><summary>TODO</summary>
             <div class="field has-addons">
               <div class="control">
                 <input class="input" type="text" placeholder="New Item" v-model="new_item">
@@ -87,14 +98,14 @@ a {
             </div>
             <ul>
             <li v-for="item in todo">
-              {{ item["name"] }}
+              <span class="animetitle">{{ item["name"] }}</span>
               <a v-on:click="_wip" :data="item['id']">wip</a>
               <a v-on:click="_abort" :data="item['id']">abort</a>
             </li>
           </ul></details>
           <details open><summary>WIP</summary><ul>
             <li v-for="item in wip">
-              {{ item["name"] }}
+              <span class="animetitle">{{ item["name"] }}</span>
               <progress v-bind:max="item['level'] + 1" v-bind:value="item['level']"></progress>
               <span class="level" v-on:click="inc" :data="item['id']">Lv.{{ item["level"] }}</span>
               <a v-on:click="_done" :data="item['id']">done</a>
@@ -103,13 +114,13 @@ a {
           </ul></details>
           <details><summary>DONE</summary><ul>
             <li v-for="item in done">
-              {{ item["name"] }}
+              <span class="animetitle">{{ item["name"] }}</span>
               <progress v-bind:max="item['level']" v-bind:value="item['level']"></progress>
             </li>
           </ul></details>
           <details><summary>ABORT</summary><ul>
             <li v-for="item in abort">
-              {{ item["name"] }}
+              <span class="animetitle">{{ item["name"] }}</span>
               <a v-on:click="_todo" :data="item['id']">todo</a>
               <a v-on:click="_wip" :data="item['id']">wip</a>
             </li>
