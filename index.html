@@ -72,7 +72,7 @@ progress {
   font-size: 0.8rem;
   cursor: pointer;
 }
-.level:hover {
+.clickable:hover {
   color: #111;
   font-weight: bold;
 }
@@ -107,7 +107,7 @@ a {
             <li v-for="item in wip">
               <span class="animetitle">{{ item["name"] }}</span>
               <progress v-bind:max="item['level'] + 1" v-bind:value="item['level']"></progress>
-              <span class="level" v-on:click="inc" :data="item['id']">Lv.{{ item["level"] }}</span>
+              <span class="level clickable" v-on:click="inc" :data="item['id']">Lv.{{ item["level"] }}</span>
               <a v-on:click="_done" :data="item['id']">done</a>
               <a v-on:click="_abort" :data="item['id']">abort</a>
             </li>
@@ -116,11 +116,14 @@ a {
             <li v-for="item in done">
               <span class="animetitle">{{ item["name"] }}</span>
               <progress v-bind:max="item['level']" v-bind:value="item['level']"></progress>
+              <span class="level">Lv.{{ item["level"] }}</span>
             </li>
           </ul></details>
           <details><summary>ABORT</summary><ul>
             <li v-for="item in abort">
               <span class="animetitle">{{ item["name"] }}</span>
+              <progress v-bind:max="item['level'] + 1" v-bind:value="item['level']"></progress>
+              <span class="level">Lv.{{ item["level"] }}</span>
               <a v-on:click="_todo" :data="item['id']">todo</a>
               <a v-on:click="_wip" :data="item['id']">wip</a>
             </li>
