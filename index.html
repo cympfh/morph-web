@@ -70,6 +70,12 @@ progress {
   display: inline;
   color: #666;
   font-size: 0.8rem;
+}
+.datetime {
+  color: #888;
+  font-size: 0.7rem;
+}
+.clickable {
   cursor: pointer;
 }
 .clickable:hover {
@@ -117,6 +123,7 @@ a {
               <span class="animetitle">{{ item["name"] }}</span>
               <progress v-bind:max="item['level']" v-bind:value="item['level']"></progress>
               <span class="level">Lv.{{ item["level"] }}</span>
+              <span class="datetime">{{ item["at"] }}</span>
             </li>
           </ul></details>
           <details><summary>ABORT</summary><ul>
