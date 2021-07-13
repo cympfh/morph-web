@@ -1,8 +1,11 @@
 dev:
 	npm run dev
 
-build:
+build: init
 	npm run build
+
+init:
+	npm install
 
 test:
 	npm run check
