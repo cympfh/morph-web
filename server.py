@@ -28,6 +28,11 @@ async def new(name: str):
     subprocess.run(["morph", "new", f"anime/{name}"], capture_output=True)
 
 
+@app.put("/morph/api/undo")
+async def undo():
+    subprocess.run(["morph", "undo", "anime"], capture_output=True)
+
+
 @app.get("/morph", response_class=HTMLResponse)
 @app.get("/", response_class=HTMLResponse)
 async def index():
